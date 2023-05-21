@@ -25,8 +25,8 @@ app.use('/v3/places/', placesRoutes);
 const distanceRoutes = require('./config/distanceRoutes');
 app.use('/v4/places/', distanceRoutes);
 
-const GeoPlaceRoutes = require('./config/GeoPlaceRoutes');
-app.use('/v5', GeoPlaceRoutes);
+const geoPlaceRoutes = require('./config/GeoPlaceRoutes');
+app.use('/v5', geoPlaceRoutes);
 
 const port = 8083;
 app.listen(port, () => {

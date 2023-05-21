@@ -3,7 +3,7 @@ const places = [
       id: 1,
       name: 'Parque da Cidade',
       latitude: -23.221112,
-      longitude: -45.899678,
+      longitude: -23.221112,
     },
     {
       id: 2,
