@@ -126,3 +126,91 @@ Exemplo de resposta:
   "message": "Lugar removido com sucesso!"
 }
 ````
+
+### 8. GET /v4/places/:id1/distanceto/:id2
+
+Retorna a distância entre 2 pontos.
+
+Exemplo de resposta:
+
+```json
+{
+  "distance": 1300.00
+}
+
+````
+## 9. GET /v4/search?latitude={latitude}&longitude={longitude}&radius={radius}
+Retorna uma lista de lugares e/ou áreas em um raio específico a partir de uma localização central (latitude e longitude) e um raio em metros. Cada lugar deve incluir a distância do ponto central especificado.
+
+Exemplo de resposta:
+```json
+  {
+    "id": 1,
+    "name": "Parque da Cidade",
+    "latitude": -23.221112,
+    "longitude": -45.899678,
+    "distance": 1300.0
+  },
+  {
+    "id": 2,
+    "name": "Praça Ulisses Guimarães",
+    "latitude": -23.180038,
+    "longitude": -45.884357,
+    "distance": 5000.0
+  },
+  {
+    "id": 3,
+    "name": "Shopping Center Vale",
+    "latitude": -23.186732,
+    "longitude": -45.884104,
+    "distance": 5600.0
+  }
+```
+# API de Gerenciamento de Lugares e Áreas
+
+Esta é uma API RESTful para gerenciamento de lugares e áreas geográficas, utilizando o banco de dados PostgreSQL com a extensão PostGIS. Ela permite criar, visualizar, atualizar e remover lugares e áreas, além de fornecer funcionalidades para pesquisar lugares e áreas dentro de um círculo, calcular a distância entre dois lugares, verificar se um lugar está dentro de uma área e listar lugares dentro de uma área.
+
+## Requisitos
+
+- Node.js
+- PostgreSQL com a extensão PostGIS
+
+## Configuração do Banco de Dados
+
+1. Crie um banco de dados no PostgreSQL:
+
+```sql
+CREATE DATABASE db_spotsat;
+```
+```sql
+CREATE TABLE places (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  point POINT
+);
+````
+```sql
+CREATE TABLE areas (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  polygon GEOMETRY(Polygon, 4326)
+);
+````
+
+## Rotas
+A API possui as seguintes rotas:
+
+- GET /places: Retorna uma lista de lugares com informações geográficas em formato GeoJSON.
+- GET /places/id: Retorna um lugar específico pelo seu ID em formato GeoJSON.
+- POST /places: Cria um novo lugar com informações geográficas a partir de um objeto GeoJSON.
+- PUT /places/id: Atualiza um lugar específico pelo seu ID a partir de um objeto GeoJSON com as informações a serem atualizadas.
+- DELETE /places/id: Deleta um lugar específico pelo seu ID.
+- GET /places/search: Retorna uma lista de lugares dentro de um círculo especificado por uma localização central (latitude e longitude) e um raio em metros.
+- GET /places/distanceto: Retorna a distância entre dois lugares pelo ID utilizando a projeção adequada.
+- GET /places/id/areas: Retorna uma lista de áreas que contêm o lugar especificado pelo ID.
+- GET /areas: Retorna uma lista de áreas em formato GeoJSON.
+- GET /areas/id: Retorna uma área específica pelo seu ID.
+- POST /areas: Cria uma nova área com informações geográficas a partir de um objeto GeoJSON.
+- PUT /areas/id: Atualiza uma área específico pelo seu ID a partir de um objeto GeoJSON com as informações a serem atualizadas.
+- DELETE /areas/id: Deleta uma área específico pelo seu ID.
+
