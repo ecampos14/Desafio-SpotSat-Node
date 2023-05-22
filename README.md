@@ -11,7 +11,7 @@ Este é um desafio de backend que consiste em desenvolver uma JSON REST API para
 4. Configure o ambiente  na raiz do projeto e preenchendo as variáveis do banco com a suasconfigurações;
 Certifique-se de substituir `host-do-banco-de-dados`, `porta-do-banco-de-dados`, `nome-do-banco-de-dados`, `usuario-do-banco-de-dados`, `senha-do-banco-de-dados` e `chave-secreta-do-jwt` com as informações corretas.
 5. Execute as migrações do banco de dados para criar as tabelas necessárias:
-6. Inicie o servidor rodando node app.js no terminal. 
+6. Inicie o servidor rodando `node app.js` no terminal. 
 
 
 O servidor será iniciado na porta 8083
@@ -60,7 +60,7 @@ Retorna uma lista de lugares com informações geográficas em formato JSON.
 Exemplo de resposta (lugares em São José dos Campos - SP):
 
 ```json
-[
+
   {
     "id": 1,
     "name": "Parque da Cidade",
@@ -74,7 +74,7 @@ Exemplo de resposta (lugares em São José dos Campos - SP):
     "longitude": -45.88435
     
  {
- ]
+ 
  ````
 ## 4. GET /v2/places/:id
 Retorna um lugar específico da lista acima pelo seu ID em formato JSON.
@@ -82,7 +82,7 @@ Retorna um lugar específico da lista acima pelo seu ID em formato JSON.
 Exemplo de resposta:
 
 ```json
-[
+
   {
     "id": 1,
     "name": "Parque da Cidade",
