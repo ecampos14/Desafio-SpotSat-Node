@@ -6,15 +6,41 @@ Este é um desafio de backend que consiste em desenvolver uma JSON REST API para
 ## Configuração
 
 1. Clone o repositório para o seu ambiente de desenvolvimento local;
-2. Acesse o diretório do projeto;
-3. Instale as dependências do projeto;
-4. Configure o ambiente  na raiz do projeto e preenchendo as variáveis do banco com a suasconfigurações;
+
+      ``https://github.com/ecampos14/Desafio-SpotSat-Node``
+3. Acesse o diretório do projeto;
+4. Instale as dependências do projeto;
+`npm install`
+6. Configure o ambiente  na raiz do projeto e preenchendo as variáveis do banco com a suasconfigurações;
 Certifique-se de substituir `host-do-banco-de-dados`, `porta-do-banco-de-dados`, `nome-do-banco-de-dados`, `usuario-do-banco-de-dados`, `senha-do-banco-de-dados` e `chave-secreta-do-jwt` com as informações corretas.
 5. Execute as migrações do banco de dados para criar as tabelas necessárias:
 6. Inicie o servidor rodando `node app.js` no terminal. 
 
 
 O servidor será iniciado na porta 8083
+
+
+## Configuração do Banco de Dados
+
+1. Crie um banco de dados no PostgreSQL:
+
+```sql
+CREATE DATABASE db_spotsat;
+```
+```sql
+CREATE TABLE places (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  point POINT
+);
+````
+```sql
+CREATE TABLE areas (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  polygon GEOMETRY(Polygon, 4326)
+);
+````
 
 ## Endpoints
 
@@ -175,27 +201,6 @@ Esta é uma API RESTful para gerenciamento de lugares e áreas geográficas, uti
 - Node.js
 - PostgreSQL com a extensão PostGIS
 
-## Configuração do Banco de Dados
-
-1. Crie um banco de dados no PostgreSQL:
-
-```sql
-CREATE DATABASE db_spotsat;
-```
-```sql
-CREATE TABLE places (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255),
-  point POINT
-);
-````
-```sql
-CREATE TABLE areas (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255),
-  polygon GEOMETRY(Polygon, 4326)
-);
-````
 
 ## Rotas
 A API possui as seguintes rotas:
