@@ -142,7 +142,7 @@ Exemplo de requisição:
   "longitude": -45.899678
 }
 ````
-7. DELETE /places/:id
+7. DELETE /v4/places/:id
 Deleta um lugar específico pelo seu ID.
 
 Exemplo de resposta:
@@ -205,17 +205,251 @@ Esta é uma API RESTful para gerenciamento de lugares e áreas geográficas, uti
 ## Rotas
 A API possui as seguintes rotas:
 
-- GET /places: Retorna uma lista de lugares com informações geográficas em formato GeoJSON.
-- GET /places/id: Retorna um lugar específico pelo seu ID em formato GeoJSON.
-- POST /places: Cria um novo lugar com informações geográficas a partir de um objeto GeoJSON.
-- PUT /places/id: Atualiza um lugar específico pelo seu ID a partir de um objeto GeoJSON com as informações a serem atualizadas.
-- DELETE /places/id: Deleta um lugar específico pelo seu ID.
+##  GET /v5/places 
+Retorna uma lista de lugares com informações geográficas em formato GeoJSON.
+Exemplo de resposta:
+```json
+ {
+        "id": 1,
+        "name": "Local A",
+        "point": {
+            "type": "Point",
+            "coordinates": [
+                -47.892,
+                -15.793
+            ]
+        }
+    },
+    {
+        "id": 2,
+        "name": "Local B",
+        "point": {
+            "type": "Point",
+            "coordinates": [
+                -47.896,
+                -15.799
+            ]
+        }
+    }
+  ````
+  
+  
+## GET /v5/places/{id}
+Retorna um lugar específico pelo seu ID em formato GeoJSON.
+Exemplo de resposta:
+```json
+    {
+        "id": 2,
+        "name": "Local B",
+        "point": {
+            "type": "Point",
+            "coordinates": [
+                -47.896,
+                -15.799
+            ]
+        }
+    }
+  ````
+
+## POST /v5/places
+Cria um novo lugar com informações geográficas a partir de um objeto GeoJSON.
+Exemplo de body:
+````json
+{
+  "name": "Local C",
+  "point": {
+    "type": "Point",
+    "coordinates": [-23.221112, -23.221112]
+  }
+}
+````
+
+## PUT /v5/places/{id} 
+Atualiza um lugar específico pelo seu ID a partir de um objeto GeoJSON com as informações a serem atualizadas.
+Exemplo de body:
+````json
+{
+  "name": "Local C",
+  "point": {
+    "type": "Point",
+    "coordinates": [-23.221112, -23.221112]
+  }
+}
+````
+## DELETE  /v5/places/{id} 
+Deleta um lugar específico pelo seu ID.
+Exemplo de resposta:
+
+````json
+Lugar removido com sucesso
+````
+## GET /v5/areas
+Retorna uma lista de áreas em formato GeoJSON.
+Exemplo de resposta:
+````json
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -43.950725,
+                            -19.864171
+                        ],
+                        [
+                            -43.947458,
+                            -19.863508
+                        ],
+                        [
+                            -43.948944,
+                            -19.860419
+                        ],
+                        [
+                            -43.951935,
+                            -19.861112
+                        ],
+                        [
+                            -43.950725,
+                            -19.864171
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "id": 1,
+                "name": "Área 1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -43.950725,
+                            -19.864171
+                        ],
+                        [
+                            -43.953021,
+                            -19.864413
+                        ],
+                        [
+                            -43.952924,
+                            -19.862654
+                        ],
+                        [
+                            -43.951175,
+                            -19.862727
+                        ],
+                        [
+                            -43.950725,
+                            -19.864171
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "id": 2,
+                "name": "Área 2"
+            }
+        }
+ ````
+
+
+## GET /v5/areas/{id}
+Retorna uma área específica pelo seu ID.
+Exemplo de resposta:
+````json
+   {
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -43.950725,
+                            -19.864171
+                        ],
+                        [
+                            -43.953021,
+                            -19.864413
+                        ],
+                        [
+                            -43.952924,
+                            -19.862654
+                        ],
+                        [
+                            -43.951175,
+                            -19.862727
+                        ],
+                        [
+                            -43.950725,
+                            -19.864171
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "id": 2,
+                "name": "Área 2"
+            }
+        }
+ ````
+## POST /v5/areas
+Cria uma nova área com informações geográficas a partir de um objeto GeoJSON.
+Exemplo de body:
+```json
+{
+  "name": "Area C",
+  "polygon": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [-43.950725, -19.864256],
+        [-43.950725, -19.866283],
+        [-43.948952, -19.866283],
+        [-43.948952, -19.864256],
+        [-43.950725, -19.864256]
+      ]
+    ]
+  }
+}
+````
+
+##  PUT v5/areas/{id}
+Atualiza uma área específico pelo seu ID a partir de um objeto GeoJSON com as informações a serem atualizadas.
+Exemplo de body:
+```json
+{
+  "name": "Area C",
+  "polygon": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [-43.950725, -19.864256],
+        [-43.950725, -19.866283],
+        [-43.948952, -19.866283],
+        [-43.948952, -19.864256],
+        [-43.950725, -19.864256]
+      ]
+    ]
+  }
+}
+````
+## DELETE /areas/id: Deleta uma área específico pelo seu ID.
+Exemplo de resposta:
+
+````json
+Área removida com sucesso
+````
+
 - GET /places/search: Retorna uma lista de lugares dentro de um círculo especificado por uma localização central (latitude e longitude) e um raio em metros.
 - GET /places/distanceto: Retorna a distância entre dois lugares pelo ID utilizando a projeção adequada.
 - GET /places/id/areas: Retorna uma lista de áreas que contêm o lugar especificado pelo ID.
-- GET /areas: Retorna uma lista de áreas em formato GeoJSON.
-- GET /areas/id: Retorna uma área específica pelo seu ID.
-- POST /areas: Cria uma nova área com informações geográficas a partir de um objeto GeoJSON.
-- PUT /areas/id: Atualiza uma área específico pelo seu ID a partir de um objeto GeoJSON com as informações a serem atualizadas.
-- DELETE /areas/id: Deleta uma área específico pelo seu ID.
+
 
