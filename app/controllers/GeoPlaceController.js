@@ -7,13 +7,19 @@ const pool = new Pool({
     password: 'ecampos',
     port: 5432
 });
+
 // Listar lugares
 const listPlaces = (req, res) => {
-    pool.query('SELECT * FROM places', (error, results) => {
+    pool.query('SELECT id, name, ST_AsGeoJSON(point) AS point FROM places', (error, results) => {
         if (error) {
             throw error;
         }
-        res.status(200).json(results.rows);
+        const places = results.rows.map(row => ({
+            id: row.id,
+            name: row.name,
+            point: JSON.parse(row.point)
+        }));
+        res.status(200).json(places);
     });
 };
 
@@ -35,17 +41,23 @@ const createPlace = (req, res) => {
 // Obter lugar pelo ID
 const getPlace = (req, res) => {
     const id = req.params.id;
-    pool.query('SELECT * FROM places WHERE id = $1', [id], (error, results) => {
+    pool.query('SELECT id, name, ST_AsGeoJSON(point) AS point FROM places WHERE id = $1', [id], (error, results) => {
         if (error) {
             throw error;
         }
         if (results.rows.length === 0) {
             res.status(404).send('Lugar não encontrado');
         } else {
-            res.status(200).json(results.rows[0]);
+            const place = {
+                id: results.rows[0].id,
+                name: results.rows[0].name,
+                point: JSON.parse(results.rows[0].point)
+            };
+            res.status(200).json(place);
         }
     });
 };
+
 
 // Atualizar lugar
 const updatePlace = (req, res) => {
@@ -83,79 +95,95 @@ const deletePlace = (req, res) => {
 };
 
 // Listar áreas
-const listAreas = (req, res) => {
-    pool.query('SELECT * FROM areas', (error, results) => {
-        if (error) {
-            throw error;
-        }
-        res.status(200).json(results.rows);
-    });
+const listAreas = async (req, res) => {
+    try {
+        const query = 'SELECT id, name, ST_AsGeoJSON(polygon) AS geometry FROM areas';
+        const { rows } = await pool.query(query);
+
+        const features = rows.map(row => ({
+            type: 'Feature',
+            geometry: JSON.parse(row.geometry),
+            properties: {
+                id: row.id,
+                name: row.name
+            }
+        }));
+
+        const featureCollection = {
+            type: 'FeatureCollection',
+            features
+        };
+
+        res.status(200).json(featureCollection);
+    } catch (error) {
+        console.error('Erro ao listar áreas:', error);
+        res.status(500).send('Erro ao listar áreas');
+    }
 };
 
 // Criar área
-const createArea = (req, res) => {
+const createArea = async (req, res) => {
     const { name, polygon } = req.body;
-    pool.query(
-        'INSERT INTO areas (name, polygon) VALUES ($1, ST_SetSRID(ST_GeomFromGeoJSON($2), 4326))',
-        [name, JSON.stringify(polygon)],
-        (error, results) => {
-            if (error) {
-                throw error;
-            }
-            res.status(201).send('Área criada com sucesso');
-        }
-    );
+    try {
+        const query = 'INSERT INTO areas (name, polygon) VALUES ($1, ST_SetSRID(ST_GeomFromGeoJSON($2), 4326)) RETURNING *';
+        const { rows } = await pool.query(query, [name, JSON.stringify(polygon)]);
+        res.status(201).json(rows[0]);
+    } catch (error) {
+        res.status(500).send('Erro ao criar área');
+    }
 };
 
 // Obter área pelo ID
-const getArea = (req, res) => {
+const getArea = async (req, res) => {
     const id = req.params.id;
-    pool.query('SELECT * FROM areas WHERE id = $1', [id], (error, results) => {
-        if (error) {
-            throw error;
+    try {
+        const query = 'SELECT ST_AsGeoJSON(polygon)::json AS geometry, id, name FROM areas WHERE id = $1';
+        const { rows } = await pool.query(query, [id]);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Área não encontrada' });
         }
-        if (results.rows.length === 0) {
-            res.status(404).send('Área não encontrada');
-        } else {
-            res.status(200).json(results.rows[0]);
-        }
-    });
+        const { geometry, ...properties } = rows[0];
+        const feature = { type: 'Feature', geometry: JSON.stringify(geometry), properties };
+        res.json({ type: 'FeatureCollection', features: [feature] });
+    } catch (error) {
+        console.error('Erro ao obter área:', error);
+        res.status(500).json({ error: 'Erro ao obter área' });
+    }
 };
 
 // Atualizar área
-const updateArea = (req, res) => {
+const updateArea = async (req, res) => {
     const id = req.params.id;
     const { name, polygon } = req.body;
-    pool.query(
-        'UPDATE areas SET name = $1, polygon = ST_SetSRID(ST_GeomFromGeoJSON($2), 4326) WHERE id = $3',
-        [name, JSON.stringify(polygon), id],
-        (error, results) => {
-            if (error) {
-                throw error;
-            }
-            if (results.rowCount === 0) {
-                res.status(404).send('Área não encontrada');
-            } else {
-                res.status(200).send('Área atualizada com sucesso');
-            }
+    try {
+        const query = 'UPDATE areas SET name = $1, polygon = ST_SetSRID(ST_GeomFromGeoJSON($2), 4326) WHERE id = $3 RETURNING *';
+        const { rowCount, rows } = await pool.query(query, [name, JSON.stringify(polygon), id]);
+        if (rowCount === 0) {
+            res.status(404).send('Área não encontrada');
+        } else {
+            res.status(200).json(rows[0]);
         }
-    );
+    } catch (error) {
+        res.status(500).send('Erro ao atualizar área');
+    }
 };
 
 // Remover área
-const deleteArea = (req, res) => {
+const deleteArea = async (req, res) => {
     const id = req.params.id;
-    pool.query('DELETE FROM areas WHERE id = $1', [id], (error, results) => {
-        if (error) {
-            throw error;
-        }
-        if (results.rowCount === 0) {
+    try {
+        const query = 'DELETE FROM areas WHERE id = $1 RETURNING *';
+        const { rowCount } = await pool.query(query, [id]);
+        if (rowCount === 0) {
             res.status(404).send('Área não encontrada');
         } else {
             res.status(200).send('Área removida com sucesso');
         }
-    });
+    } catch (error) {
+        res.status(500).send('Erro ao remover área');
+    }
 };
+
 
 const findPlacesWithinCircle = (req, res) => {
     const { lat, lng, radius } = req.query;
@@ -226,7 +254,7 @@ const listPlacesInArea = (req, res) => {
 const calculateDistance = (req, res) => {
     const { placeId1, placeId2 } = req.query;
     pool.query(
-        'SELECT ST_AsGeoJSON(ST_Distance(p1.point, p2.point)) AS distance FROM places p1, places p2 WHERE p1.id = $1 AND p2.id = $2',
+        'SELECT ST_Distance(p1.point, p2.point) AS distance FROM places p1, places p2 WHERE p1.id = $1 AND p2.id = $2',
         [placeId1, placeId2],
         (error, results) => {
             if (error) {
@@ -235,12 +263,14 @@ const calculateDistance = (req, res) => {
             if (results.rows.length === 0) {
                 res.status(404).send('Lugar(es) não encontrado(s)');
             } else {
-                const distanceGeoJSON = results.rows[0].distance;
-                res.status(200).json(JSON.parse(distanceGeoJSON));
+                const distance = results.rows[0].distance;
+                res.status(200).json({ distance });
             }
         }
     );
 };
+
+
 module.exports = {
     listPlaces,
     createPlace,

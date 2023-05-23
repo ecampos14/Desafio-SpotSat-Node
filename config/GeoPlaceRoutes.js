@@ -17,9 +17,9 @@ router.put('/areas/:id', GeoPlaceController.updateArea);
 router.delete('/areas/:id', GeoPlaceController.deleteArea);
 
 // Rotas adicionais
-router.get('/places/within-circle', GeoPlaceController.findPlacesWithinCircle);
-router.get('/places/distance', GeoPlaceController.calculateDistance);
-router.get('/places/:placeId/is-in-area/:areaId', GeoPlaceController.checkPlaceInArea);
+router.get('/places/circle', GeoPlaceController.findPlacesWithinCircle);
+router.get('/places/calculo', GeoPlaceController.calculateDistance);
+router.get('/places/:placeId/:areaId', GeoPlaceController.checkPlaceInArea);
 router.get('/areas/:areaId/places', GeoPlaceController.listPlacesInArea);
 
 module.exports = router;
