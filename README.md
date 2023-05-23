@@ -280,7 +280,7 @@ Exemplo de body:
 Deleta um lugar específico pelo seu ID.
 Exemplo de resposta:
 
-````json
+````
 Lugar removido com sucesso
 ````
 ## GET /v5/areas
@@ -421,7 +421,7 @@ Exemplo de body:
 }
 ````
 
-##  PUT v5/areas/{id}
+##  PUT /v5/areas/{id}
 Atualiza uma área específico pelo seu ID a partir de um objeto GeoJSON com as informações a serem atualizadas.
 Exemplo de body:
 ```json
@@ -441,15 +441,42 @@ Exemplo de body:
   }
 }
 ````
-## DELETE /areas/id: Deleta uma área específico pelo seu ID.
+## DELETE /v5/areas/id: Deleta uma área específico pelo seu ID.
 Exemplo de resposta:
 
-````json
+````
 Área removida com sucesso
 ````
 
-- GET /places/search: Retorna uma lista de lugares dentro de um círculo especificado por uma localização central (latitude e longitude) e um raio em metros.
-- GET /places/distanceto: Retorna a distância entre dois lugares pelo ID utilizando a projeção adequada.
-- GET /places/id/areas: Retorna uma lista de áreas que contêm o lugar especificado pelo ID.
+##  GET /v5/places/{id}/areas
+Retorna uma lista de áreas que contêm o lugar especificado pelo ID.
 
+Exemplo de resposta:
+````json
+  {
+    "id": 1,
+    "name": "Place 1",
+    "point": {
+      "type": "Point",
+      "coordinates": [longitude, latitude]
+    },
+  },
+  {
+    "id": 2,
+    "name": "Place 2",
+    "point": {
+      "type": "Point",
+      "coordinates": [longitude, latitude]
+    },
+  }
+````
+
+## GET  /v5/places/{placeId}/{areaId}
+Verificar se um determinado lugar está dentro de uma determinada área. 
+Exemplo de resposta:
+````json
+{
+    "is_within": false
+}
+````
 
