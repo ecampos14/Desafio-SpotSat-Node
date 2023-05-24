@@ -184,33 +184,6 @@ const deleteArea = async (req, res) => {
     }
 };
 
-
-const findPlacesWithinCircle = (req, res) => {
-    const { lat, lng, radius } = req.query;
-    const point = {
-        type: 'Point',
-        coordinates: [parseFloat(lng), parseFloat(lat)]
-    };
-    const geoJSONPoint = JSON.stringify(point);
-
-    pool.query(
-        `SELECT *, ST_AsGeoJSON(point) AS geojson
-      FROM places
-      WHERE ST_DWithin(point::geography, ST_SetSRID(ST_GeomFromGeoJSON($1), 4326)::geography, $2)`,
-        [geoJSONPoint, radius],
-        (error, results) => {
-            if (error) {
-                throw error;
-            }
-            const places = results.rows.map(row => ({
-                ...row,
-                point: JSON.parse(row.geojson)
-            }));
-            res.status(200).json(places);
-        }
-    );
-};
-
 const checkPlaceInArea = (req, res) => {
     const { placeId, areaId } = req.params;
     pool.query(
@@ -251,26 +224,6 @@ const listPlacesInArea = (req, res) => {
     );
 };
 
-const calculateDistance = (req, res) => {
-    const { placeId1, placeId2 } = req.query;
-    pool.query(
-        'SELECT ST_Distance(p1.point, p2.point) AS distance FROM places p1, places p2 WHERE p1.id = $1 AND p2.id = $2',
-        [placeId1, placeId2],
-        (error, results) => {
-            if (error) {
-                throw error;
-            }
-            if (results.rows.length === 0) {
-                res.status(404).send('Lugar(es) não encontrado(s)');
-            } else {
-                const distance = results.rows[0].distance;
-                res.status(200).json({ distance });
-            }
-        }
-    );
-};
-
-
 module.exports = {
     listPlaces,
     createPlace,
@@ -282,8 +235,6 @@ module.exports = {
     getArea,
     updateArea,
     deleteArea,
-    findPlacesWithinCircle,
     checkPlaceInArea,
     listPlacesInArea,
-    calculateDistance
 };
