@@ -458,7 +458,7 @@ Exemplo de resposta:
     "name": "Place 1",
     "point": {
       "type": "Point",
-      "coordinates": [longitude, latitude]
+      "coordinates": [-43.950725, -19.864256]
     },
   },
   {
@@ -466,7 +466,7 @@ Exemplo de resposta:
     "name": "Place 2",
     "point": {
       "type": "Point",
-      "coordinates": [longitude, latitude]
+      "coordinates": [-43.950725, -19.864256]
     },
   }
 ````
